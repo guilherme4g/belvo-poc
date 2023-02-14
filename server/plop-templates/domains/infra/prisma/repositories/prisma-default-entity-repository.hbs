@@ -1,0 +1,25 @@
+import { PrismaClient } from '@prisma/client';
+
+import { I{{pascalCase feature}}Repository } from '@/domains/{{dashCase entity}}/usecases/repos';
+import { Prisma{{pascalCase entity}}Model } from '@/domains/{{dashCase entity}}/infra/prisma/models';
+
+import { prismaConnector, PrismaException } from '@/shared/infra/prisma';
+
+export class Prisma{{pascalCase feature}}Repository
+  implements I{{pascalCase feature}}Repository {
+  private prismaConnection: PrismaClient;
+
+  constructor() {
+    this.prismaConnection = prismaConnector.connect();
+  }
+
+  async {{method}}(
+    params: I{{pascalCase feature}}Repository.Params
+  ): Promise<I{{pascalCase feature}}Repository.Result> {
+    try {
+      throw new Error('Method not implemented.');
+    } catch (error) {
+      throw new PrismaException(error);
+    }
+  }
+}

@@ -1,0 +1,14 @@
+import { {{pascalCase name}} as Prisma{{pascalCase name}} } from '@prisma/client';
+import { {{pascalCase name}} } from '@/domains/{{dashCase name}}/entities';
+
+export class Prisma{{pascalCase name}}Model {
+  static toDomain( {{camelCase name}}DTO: Prisma{{pascalCase name}}): {{pascalCase name}} {
+    return new {{pascalCase name}}({
+      id: {{camelCase name}}DTO.id,
+      name: {{camelCase name}}DTO.name,
+      enabled: {{camelCase name}}DTO.enabled,
+      createdAt: {{camelCase name}}DTO.createdAt,
+      updatedAt: {{camelCase name}}DTO.updatedAt,
+    });
+  }
+}
