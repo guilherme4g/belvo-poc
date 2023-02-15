@@ -11,9 +11,16 @@ module.exports = {
           splitChunks: false
         },
       },
+
     outputDir: path.resolve(__dirname, "../dist/"),
+
     devServer: {
         disableHostCheck: true
     },
-    filenameHashing: false
+
+    filenameHashing: false,
+
+    transpileDependencies: [
+      'vuetify'
+    ]
 }

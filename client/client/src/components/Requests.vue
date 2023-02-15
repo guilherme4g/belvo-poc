@@ -1,251 +1,288 @@
 <template>
-  <div>
-    <div class="row pb-xl">
-      <div class="col">
-        <div class="text-regular-20 pb-m">
-          Success! You just created a link in Belvo.
+  <v-app>
+    <div style="padding: 2rem">
+      <div class="row pb-xl">
+        <div class="col">
+          <div class="text-regular-20 pb-m">
+            Success! You just created a link in Belvo.
+          </div>
+          <div class="divider" />
         </div>
-        <div class="divider" />
       </div>
-    </div>
-    <div class="row mb-xl">
-      <div class="col-6">
-        <p class="title">LINK  ID</p>
-        <p class="data">{{this.linkId}}</p>
+      <div class="row mb-xl">
+        <div class="col-6">
+          <p class="title">LINK ID</p>
+          <p class="data">{{ this.linkId }}</p>
+        </div>
       </div>
-    </div>
-    <card class="widget-list">
+
       <div slot="content">
         <div class="widget-list__header px-l py-l">
           <div class="row flex-middle">
             <div class="col">
-              <div class="text-medium-16">
-                ENDPOINTS
-              </div>
+              <div class="text-medium-16">ENDPOINTS</div>
             </div>
           </div>
         </div>
         <div class="widget-list__content px-l">
-          <div
-            class="list-item"
-          >
+          <div class="list-item">
             <div class="row py-m flex-between">
-              <div
-                class="two-list-item-action__left-item col request-title"
-              >
-                <div class="text-regular-14 request-type post mr-l">
-                  POST
-                </div>
+              <div class="two-list-item-action__left-item col request-title">
+                <div class="text-regular-14 request-type post mr-l">POST</div>
                 <div class="request-content">
                   <div class="row">
-                    <div class="text-medium-16 mr-m">
-                      Accounts
-                    </div>
-                    <div class="text-regular-14">
-                      /api/accounts/
-                    </div>
+                    <div class="text-medium-16 mr-m">Accounts</div>
+                    <div class="text-regular-14">/api/accounts/</div>
                   </div>
                   <div class="row">
                     <div class="text-regular-14">
-                      Retrieve the information from all the Accounts inside the Link.
+                      Retrieve the information from all the Accounts inside the
+                      Link.
                     </div>
                   </div>
                 </div>
               </div>
-              <div
-                class="list-item-action col"
-              >
-                <b-button type="primary" :fluid="false" text="Send request" @clicked="retrieveAccounts()" />
+              <div class="list-item-action col">
+                <b-button
+                  type="primary"
+                  :fluid="false"
+                  text="GET"
+                  @clicked="retrieveAccounts()"
+                />
               </div>
             </div>
             <div class="request-response" v-if="this.accounts">
-              <div
-                class="row response-header pb-s"
+              <v-data-table
+                :headers="headersAccount"
+                :items="accounts"
+                :items-per-page="5"
+                class="elevation-1"
               >
-                <div class="text-medium-14 col">
-                  Name
-                </div>
-                <div class="text-medium-14 col">
-                  Account Number
-                </div>
-                <div class="text-medium-14 col">
-                  Balance
-                </div>
-              </div>
-              <div :key="item.id" v-for="item in this.accounts" class="row mb-xl pt-m pb-m">
-                <div class="text-regular-16 col">
-                  {{item.name}}
-                </div>
-                <div class="text-regular-16 col">
-                  {{item.number}}
-                </div>
-                <div class="text-regular-16 col">
-                  ${{item.balance.current}}
-                </div>
-              </div>
+                <template v-slot:item.id="{ item }">
+                  <button v-on:click="openDialog(item.id)">Ver detalhes</button>
+                </template>
+              </v-data-table>
             </div>
           </div>
-          <div
-            class="list-item"
-          >
+          <div class="list-item">
             <div class="row py-m flex-between">
-              <div
-                class="two-list-item-action__left-item col request-title"
-              >
-                <div class="text-regular-14 request-type post mr-l">
-                  POST
-                </div>
+              <div class="two-list-item-action__left-item col request-title">
+                <div class="text-regular-14 request-type post mr-l">POST</div>
                 <div class="request-content">
                   <div class="row">
-                    <div class="text-medium-16 mr-m">
-                      Transactions
-                    </div>
-                    <div class="text-regular-14">
-                      /api/transactions/
-                    </div>
+                    <div class="text-medium-16 mr-m">Transactions</div>
+                    <div class="text-regular-14">/api/transactions/</div>
                   </div>
                   <div class="row">
                     <div class="text-regular-14">
-                      Retrieve the transactions from the last 30 days from each one of the Accounts inside the Link already created.
+                      Retrieve the transactions from the last 30 days from each
+                      one of the Accounts inside the Link already created.
                     </div>
                   </div>
                 </div>
               </div>
               <div class="list-item-action col">
-                <b-button type="primary" :fluid="false" text="Send request" @clicked="retrieveTransactions()" />
+                <b-button
+                  type="primary"
+                  :fluid="false"
+                  text="GET"
+                  @clicked="retrieveTransactions()"
+                />
               </div>
             </div>
             <div class="request-response" v-if="this.transactions">
-              <div class="row response-header pb-s">
-                <div class="text-medium-14 col">
-                  Name
-                </div>
-                <div class="text-medium-14 col">
-                  Amount
-                </div>
-                <div class="text-medium-14 col">
-                  Date
-                </div>
-              </div>
-              <div :key="item.id" v-for="item in this.transactions" class="row mb-xl pt-m pb-m">
-                <div class="text-regular-16 col">
-                  {{item.description}}
-                </div>
-                <div class="text-regular-16 col">
-                  {{item.amount}}
-                </div>
-                <div class="text-regular-16 col">
+              <v-data-table
+                :headers="headersTransaction"
+                :items="transactions"
+                :items-per-page="5"
+                class="elevation-1"
+              >
+                <template v-slot:item.value_date="{ item }">
                   {{ formatDate(item.value_date) }}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="list-item">
-            <div class="row py-m flex-between">
-              <div class="two-list-item-action__left-item col request-title">
-                <div class="text-regular-14 request-type post mr-l">
-                  POST
-                </div>
-                <div class="request-content">
-                  <div class="row">
-                    <div class="text-medium-16 mr-m">
-                      Balance
-                    </div>
-                    <div class="text-regular-14">
-                      /api/balances/
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="text-regular-14">
-                      Retrieve the daily balance of all the Accounts for the last 30 days.
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="list-item-action col">
-                <b-button type="primary" :fluid="false" text="Send request" @clicked="retrieveBalances()" />
-              </div>
-            </div>
-            <div class="request-response" v-if="this.balances">
-              <div class="row response-header pb-s">
-                <div class="text-medium-14 col">
-                  Name
-                </div>
-                <div class="text-medium-14 col">
-                  Balance
-                </div>
-                <div class="text-medium-14 col">
-                  Date
-                </div>
-              </div>
-              <div :key="item.id" v-for="item in this.balances" class="row mb-xl pt-m pb-m">
-                <div class="text-regular-16 col">
-                  {{item.account.name}}
-                </div>
-                <div class="text-regular-16 col">
-                  {{item.current_balance}}
-                </div>
-                <div class="text-regular-16 col">
-                  {{ formatDate(item.value_date) }}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="list-item">
-            <div class="row py-m flex-between">
-              <div class="two-list-item-action__left-item col request-title">
-                <div class="text-regular-14 request-type post mr-l">
-                  POST
-                </div>
-                <div class="request-content">
-                  <div class="row">
-                    <div class="text-medium-16 mr-m">
-                      Owners
-                    </div>
-                    <div class="text-regular-14">
-                      /api/owners/
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="text-regular-14">
-                      Retrieve the personal information of the owner of the Link.
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="list-item-action col">
-                <b-button type="primary" :fluid="false" text="Send request" @clicked="retrieveOwners()" />
-              </div>
-            </div>
-            <div class="request-response" v-if="this.owners">
-              <div class="row response-header pb-s">
-                <div class="text-medium-14 col">
-                  Name
-                </div>
-                <div class="text-medium-14 col">
-                  Email
-                </div>
-                <div class="text-medium-14 col">
-                  Phone Number
-                </div>
-              </div>
-              <div :key="item.id" v-for="item in this.owners" class="row mb-xl pt-m pb-m">
-                <div class="text-regular-16 col">
-                  {{item.display_name}}
-                </div>
-                <div class="text-regular-16 col">
-                  {{item.email}}
-                </div>
-                <div class="text-regular-16 col">
-                  {{item.phone_number}}
-                </div>
-              </div>
+                </template>
+                <template v-slot:item.id="{ item }">
+                  <button v-on:click="openDialogTransaction(item.id)">
+                    Ver detalhes
+                  </button>
+                </template>
+              </v-data-table>
             </div>
           </div>
         </div>
       </div>
-    </card>
-  </div>
+    </div>
+    <v-dialog v-model="dialogOpen" width="1500" style="overflow: auto">
+      <v-card
+        style="padding: 2rem; height: 400; display: grid; place-content: center"
+      >
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          v-if="accountLoading"
+        ></v-progress-circular>
+        <div v-if="selectedAccount">
+          <v-card-title class="text-h5 grey lighten-2"> Account </v-card-title>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 1rem;
+              padding: 2rem;
+            "
+          >
+            <div>
+              <p style="font-weight: bolder">Agência</p>
+              <p>{{ selectedAccount.agency }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Identificação interna</p>
+              <p>{{ selectedAccount.internal_identification }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Identificação pública nome</p>
+              <p>{{ selectedAccount.public_identification_name }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Identificação pública valor</p>
+              <p>{{ selectedAccount.public_identification_value }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Número</p>
+              <p>{{ selectedAccount.number }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Balanço</p>
+              <p>{{ selectedAccount.balance_type }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Categoria</p>
+              <p>{{ selectedAccount.category }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Tipo</p>
+              <p>{{ selectedAccount.type }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Data criação</p>
+              <p>{{ formatDate(selectedAccount.created_at) }}</p>
+            </div>
+          </div>
+          <div
+            v-if="
+              selectedAccount &&
+              selectedAccount.funds_data &&
+              selectedAccount.funds_data.length
+            "
+          >
+            <p style="font-weight: bolder">Fundos</p>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                width: 100%;
+                margin-top: 2rem;
+              "
+            >
+              <div
+                v-for="(fund, index) of selectedAccount.funds_data"
+                v-bind:key="index"
+                style="border: 1px dashed gray; padding: 1rem"
+              >
+                <p style="font-weight: bolder">{{ fund.name }}</p>
+                <p>Balanço: {{ fund.balance }}</p>
+                <p>Percentual: {{ fund.percentage }}</p>
+                <p>Percentual: {{ fund.percentage }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="dialogTransactionOpen"
+      width="1500"
+      style="overflow: auto"
+    >
+      <v-card
+        style="padding: 2rem; height: 400; display: grid; place-content: center"
+      >
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          v-if="transactionLoading"
+        ></v-progress-circular>
+        <div v-if="selectedTransaction">
+          <v-card-title class="text-h5 grey lighten-2">
+            Transaction
+          </v-card-title>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 1rem;
+              padding: 2rem;
+            "
+          >
+            <div>
+              <p style="font-weight: bolder">Montante</p>
+              <p>{{ selectedTransaction.amount }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Balanço</p>
+              <p>{{ selectedTransaction.balance }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Categoria</p>
+              <p>{{ selectedTransaction.category }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Data de criação</p>
+              <p>{{ selectedTransaction.created_at }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Status</p>
+              <p>{{ selectedTransaction.status }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Tipo</p>
+              <p>{{ selectedTransaction.type }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Subcategoria</p>
+              <p>{{ selectedTransaction.subcategory }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Descrição</p>
+              <p>{{ selectedTransaction.description }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Identificação internacional</p>
+              <p>{{ selectedTransaction.internal_identification }}</p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Comerciante</p>
+              <p>
+                {{
+                  selectedTransaction.merchant &&
+                  selectedTransaction.merchant.name
+                }}
+              </p>
+            </div>
+            <div>
+              <p style="font-weight: bolder">Site Comerciante</p>
+              <p>
+                {{
+                  selectedTransaction.merchant &&
+                  selectedTransaction.merchant.site
+                }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </v-card>
+    </v-dialog>
+  </v-app>
 </template>
 
 <script>
@@ -253,111 +290,181 @@ import axios from "axios";
 import moment from "moment";
 
 export default {
-  name: 'Requests',
+  name: "Requests",
   props: {
-    linkId: String
+    linkId: String,
   },
   data() {
     return {
+      headersAccount: [
+        {
+          text: "Nome",
+          align: "start",
+          sortable: false,
+          value: "name",
+        },
+        { text: "Número da conta", value: "number" },
+        { text: "Balanço", value: "balance.current" },
+        { text: "Ver detalhes", value: "id" },
+      ],
+      headersTransaction: [
+        { text: "Descrição", value: "description" },
+        { text: "Valor", value: "amount" },
+        { text: "Data", value: "value_date" },
+        { text: "Ver detalhes", value: "id" },
+      ],
       accounts: null,
+      selectedAccount: null,
+      accountLoading: false,
+      selectedTransaction: null,
+      transactionLoading: false,
+      dialogOpen: false,
+      dialogTransactionOpen: false,
       transactions: null,
       balances: null,
-      owners: null
-    }
+      owners: null,
+    };
   },
   methods: {
+    async openDialog(id) {
+      this.selectedAccount = null;
+      this.dialogOpen = true;
+      this.accountLoading = true;
+      try {
+        const response = await this.retrieveAccount(id);
+        this.selectedAccount = response.data;
+
+        this.accountLoading = false;
+      } catch (_) {
+        this.accountLoading = false;
+      }
+    },
+    async openDialogTransaction(id) {
+      this.selectedTransaction = null;
+      this.transactionLoading = true;
+      this.dialogTransactionOpen = true;
+
+      try {
+        const response = await this.retrieveTransaction(id);
+        this.selectedTransaction = response.data;
+
+        this.transactionLoading = false;
+      } catch (_) {
+        this.transactionLoading = false;
+      }
+    },
+    closeDialog() {
+      this.dialogOpen = false;
+    },
     retrieveAccounts() {
-      axios.post('http://127.0.0.1:5000/accounts', {link_id: this.linkId})
-          .then((response) => {
-            this.accounts = response.data;
-          })
+      axios
+        .get("https://372d-150-161-2-200.sa.ngrok.io/bank-accounts", {
+          params: {
+            linkId: this.linkId,
+          },
+        })
+        .then((response) => {
+          this.accounts = response.data;
+        });
+    },
+    retrieveAccount(id) {
+      return axios.get(
+        `https://372d-150-161-2-200.sa.ngrok.io/bank-accounts/${id}`,
+        {
+          params: {
+            linkId: this.linkId,
+          },
+        }
+      );
     },
     retrieveTransactions() {
-      axios.post('http://127.0.0.1:5000/transactions', {link_id: this.linkId})
-          .then((response) => {
-            this.transactions = response.data;
-          })
+      axios
+        .get("https://372d-150-161-2-200.sa.ngrok.io/bank-transactions", {
+          params: {
+            linkId: this.linkId,
+          },
+        })
+        .then((response) => {
+          this.transactions = response.data;
+        });
     },
-    retrieveBalances() {
-      axios.post('http://127.0.0.1:5000/balances', {link_id: this.linkId})
-          .then((response) => {
-            this.balances = response.data;
-          })
-    },
-    retrieveOwners() {
-      axios.post('http://127.0.0.1:5000/owners', {link_id: this.linkId})
-          .then((response) => {
-            this.owners = response.data;
-          })
+    retrieveTransaction(id) {
+      return axios.get(
+        `https://372d-150-161-2-200.sa.ngrok.io/bank-transactions/${id}`,
+        {
+          params: {
+            linkId: this.linkId,
+          },
+        }
+      );
     },
     formatDate(date) {
-      return moment(date).format('DD-MM-YYYY')
-    }
-  }
-}
+      return moment(date).format("DD-MM-YYYY");
+    },
+  },
+};
 </script>
 <style lang="scss" scoped>
-  .title {
-    position: relative;
-    z-index: 2;
-    width: 90px;
-    text-transform: uppercase;
-    font-size: .90rem;
-    font-weight: 600;
-    line-height: 24px;
-    font-family: Noto Sans TC;
-    margin: 0;
-  }
-  .data {
-    margin: 0;
-    font-family: Noto Sans TC;
-  }
-  .widget-list {
-    &__header {
-      border-bottom: 1px solid #f0f2f4;
+.title {
+  position: relative;
+  z-index: 2;
+  width: 90px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 24px;
+  font-family: Noto Sans TC;
+  margin: 0;
+}
+.data {
+  margin: 0;
+  font-family: Noto Sans TC;
+}
+.widget-list {
+  &__header {
+    border-bottom: 1px solid #f0f2f4;
 
-      &-table {
-        color: grey;
-        &-event {
-          padding-right: 95px;
-        }
+    &-table {
+      color: grey;
+      &-event {
+        padding-right: 95px;
+      }
 
-        &-callback {
-          padding-right: 361px;
-        }
+      &-callback {
+        padding-right: 361px;
+      }
 
-        &-status {
-
-        }
+      &-status {
       }
     }
   }
-  .list-item {
-    border-bottom: .0625rem solid #f0f2f4;
-    .list-item-action {
-      display:  flex;
-      justify-content: flex-end;
-    }
-  }
-  .request-type {
-    padding: 5px 15px;
-    background: #ebebeb;
-    color: #ffffff;
-
-    &.post {
-      background: rgb(36, 143, 178);
-    }
-  }
-  .request-content {
-    min-width: 550px;
-  }
-  .request-title {
+}
+.list-item {
+  border-bottom: 0.0625rem solid #f0f2f4;
+  .list-item-action {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    width: 200px;
+    justify-content: flex-end;
   }
-  .response-header {
-    color: #c4cdd4;
+}
+.request-type {
+  padding: 5px 15px;
+  background: #ebebeb;
+  color: #ffffff;
+
+  &.post {
+    background: rgb(36, 143, 178);
   }
+}
+.request-content {
+  min-width: 550px;
+}
+.request-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 200px;
+}
+.response-header {
+  color: #c4cdd4;
+}
 </style>
